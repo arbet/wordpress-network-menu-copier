@@ -176,6 +176,8 @@ class NetworkMenuCopier {
 	// Get menu object items
 	$menu_object_items = wp_get_nav_menu_items($origin_menu_id);
 	
+	//echo "<pre>";var_dump($menu_object_items);die();
+	
 	// Get menu name from origin menu
 	$default_menu_name = $menu_object->name;
 	
@@ -211,41 +213,6 @@ class NetworkMenuCopier {
 	    $walker = new NetworkMenuWalker($menu_id); //add menu id to constructor
 	    $walker->walk($menu_object_items,0);
 	    
-	    //die();
-	    // Loop through original menu, and add all links to the copied menus
-	    foreach($menu_object_items as $key => $item){
-		
-		//TODO call menu walker class
-	
-		
-		/*
-		// Item classes need to be a string, not an array
-		$item_classes = '';
-		
-		foreach($item->classes as $key=> $class){
-		    $item_classes.= ' '.$class;
-		}
-		
-		// Replace links to reflect new site URLs
-		$link = NetworkMenuCopier::replace_links($item->url, get_site_url($origin_site), get_site_url($site_id) );
-
-		
-		// Create array for menu options
-		$arguments = array('menu-item-title' => $item->title, 
-				    'menu-item-url' => $link,
-				    'menu-item-description' => $item->description,
-				    'menu-item-attr-title' => $item->attr_title,
-				    'menu-item-target' => $item->target,
-				    'menu-item-classes' => $item_classes,
-				    'menu-item-xfn' => $item->xfn,
-				    'menu-item-status' => 'publish',
-				    'menu-item-type' => 'custom' // All new menu links will be marked as custom, because it will show an invalid page sometimes
-				    
-				    		    );
-		wp_update_nav_menu_item( $menu_id, 0 , $arguments);
-		 * *
-		 */
-	    }
 	    
 	    // Now, we need to assign menus to the location we specified
 	    
