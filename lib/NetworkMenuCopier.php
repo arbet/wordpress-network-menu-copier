@@ -160,10 +160,7 @@ class NetworkMenuCopier {
 	
 	// Switch to posted blog ID
 	switch_to_blog(intval( $origin_site ));
-	
-	//echo "<pre>";
-	//var_dump($_POST);die();
-	
+
 	// Get the ID of the menu we're copying
 	$origin_menu_id = intval ($_POST['origin_menu']);
 	
@@ -191,9 +188,8 @@ class NetworkMenuCopier {
 	    switch_to_blog(intval ($site_id));
 	    
 	    // Get posted menu name, or use default
-	    $menu_name = (isset($_POST['menu_name']) && !empty($_POST['menu_name']))?$_POST['menu_name']:$default_menu_name;
-	    
-	    
+	    $menu_name = (!empty($_POST['menu_name']))?$_POST['menu_name']:$default_menu_name;
+	    	    
 	    // Check if the menu exists
 	    $menu_exists = wp_get_nav_menu_object( $menu_name );
 	    
@@ -203,8 +199,7 @@ class NetworkMenuCopier {
 	    }
 	    // Otherwise delete menu and recreate it with new links
 	    else{
-		
-		//var_dump($menu_exists->{term_id});die();
+
 		// Delete the old menu and recreate it
 		wp_delete_nav_menu($menu_exists->{term_id});
 		$menu_id = wp_create_nav_menu($menu_name);

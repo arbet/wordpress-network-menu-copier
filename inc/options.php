@@ -29,13 +29,14 @@ $sites = wp_get_sites();
 ?>
 <table class="form-table">
         <tr valign="top">
-        <th scope="row">Site to copy menu from*</th>
+        <th scope="row">Origin site*</th>
         <td><select name='origin_site' id='origin_site' class='select_chosen'>
 <?php    foreach($sites as $key=>$site){
 	echo "<option value='".$site['blog_id']."'>".$site['domain']."</option>";
     }
 ?>
 	    </select>
+	    <p class='description'>Site to copy menu from</p>
 	</td>
         </tr>
         <tr valign="top">
@@ -46,11 +47,11 @@ $sites = wp_get_sites();
 	</td>
         </tr>	
         <tr valign="top">
-        <th scope="row">Sites to copy menu to*</th>
+        <th scope="row">Destination sites*</th>
         <td><select name='destination_sites[]' id="destination_sites" multiple class='select_chosen'> 
 	    </select>
 	    <p class="description">
-		Only sites that have the same active theme as the site you are copying from will be displayed here since every theme has a different menu structure. 
+		Where will you be copying this menu to? Only sites that have the same active theme as origin site will be displayed here since every theme has a different menu structure. 
 	    </p>	    
 	</td>
         </tr>		
@@ -66,7 +67,7 @@ $sites = wp_get_sites();
         <td><select name='menu_location'  id="menu_location" class='select_chosen'>
 	    </select>
 	    <p class="description">
-		The menu will be copied and displayed on your theme's menu location at the location you specify in this field. This will show one or more fields depending on your specific theme.
+		The menu will be copied and displayed on your theme's menu location at the location you specify in this field. Only fields that are assigned a menu in your origin site will be listed here.
 	    </p>
 	</td>
         </tr>	

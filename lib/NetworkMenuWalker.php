@@ -71,8 +71,6 @@ class NetworkMenuWalker extends Walker_Nav_Menu {
 		// Add the item to the database
 		$item_id = wp_update_nav_menu_item( $this->menu_id, 0 , $arguments);	
 		
-		//var_dump($item_id);die();
-		
 		// Update the previous parent record, so we now how to assign the parent ID for the newly created node
 		$this->parent_id = $item_id;    
 		
@@ -95,4 +93,9 @@ class NetworkMenuWalker extends Walker_Nav_Menu {
     public function end_lvl( &$output, $depth = 0, $args = array() ) {
 	 
      }
+     
+    // Returns the object associated with a menu item 
+    private function get_object($item){
+	
+    }
 }
