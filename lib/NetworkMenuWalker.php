@@ -60,13 +60,29 @@ class NetworkMenuWalker extends Walker_Nav_Menu {
 		// Get destination object
 		$linked_object = $this->get_destination_object($item);
 		
+		// Set object source to destination site
+		$object_source = 'destination';
+		
 		// Destination object is invalid, link to origin object and set and invalid
 		if($linked_object === FALSE){
+		    
+		    
+		    // Skip this object
+		    $this->parent_id = $item_id; 
+		    
+		    return;
+		  /*  // Get the origin object
 		    $linked_object = $this->get_origin_object($item);
+		    
+		    // Set its ID to null - since we don't want to point to destination object
+		    $linked_object->ID = null;
+		    
+		    // Set object source to origin since destination object does not exist
+		    $object_source = 'origin';*/
 		}
 		
 		// Prepare arguments for copying
-		$arguments = $this->prepare_copy_arguments($item, $linked_object);		
+		$arguments = $this->prepare_copy_arguments($item, $linked_object, $object_source);		
 		
 		// Add the item to the database
 		$item_id = wp_update_nav_menu_item( $this->menu_id, 0 , $arguments);	
@@ -146,108 +162,19 @@ class NetworkMenuWalker extends Walker_Nav_Menu {
 	
     }
     
-    // Prepare the copy arguments based on the destination object the menu item is pointing to
-    private function prepare_copy_arguments($old_menu_item, $destination_object){
+    // This function just initializes a parser object linked to the site we're copying from
+    // @return array $arguments Array of arguments to be passed to create item
+    private function prepare_copy_arguments($old_menu_item, $linked_object, $object_source){
 	
-	/* First thing, we need to get the old menu item metadata (link, xfn, description, title...) */
+	// Create parser object
+	$parser = new NMC_Parser($this->origin_site_id, get_current_blog_id());
 	
-	// Get current blog ID before switching
-	$current_id = get_current_blog_id();
+	// Prepare arguments
+	$arguments = $parser->prepare_arguments($old_menu_item, $linked_object , $object_source);
 	
-	// Switch to blog we're copying from 
-	switch_to_blog($this->origin_site_id);	    
-
-	// Get the metadata for the old menu item
-	$old_menu_meta = get_post_meta($old_menu_item->ID, '', true);
-
-	// Switch back to our current blog
-	switch_to_blog($current_id);
-	
-	// Check if we're linking to a wordpress post
-	if(is_a($destination_object, 'WP_Post')){
-
-	    // TODO: Shouldn't this only apply to a custom menu type?
-	    // Replace links to reflect new site URLs
-	    $link = NetworkMenuCopier::replace_links($old_menu_meta['_menu_item_url'][0], get_site_url(intval ($_POST['origin_site'])), get_site_url() );
-
-	    // Get a string of item classes from the array
-	    $item_classes = $this->get_item_classes(unserialize($old_menu_meta['_menu_item_classes'][0]));
-
-	    // Create array for menu options
-	    $arguments = array(
-		'menu-item-title' => $old_menu_item->post_title, 
-		'menu-item-url' => $link,
-		'menu-item-description' => $old_menu_item->post_content,
-		'menu-item-attr-title' => $old_menu_item->post_excerpt,
-		'menu-item-target' => $old_menu_meta['_menu_item_target'][0],
-		'menu-item-classes' => $item_classes,
-		'menu-item-xfn' => $old_menu_meta['_menu_item_xfn'][0],
-		'menu-item-status' => 'publish',
-		'menu-item-type' => 'post_type',
-		'menu-item-object' => $destination_object->post_type,
-		'menu-item-parent-id' => $this->parent_id,
-		'menu-item-position' => $old_menu_item->menu_order,
-		'menu-item-object-id' => $destination_object->ID   
-	    );	    
-	}
-	
-	// No destination object exists, just use placeholder links
-	elseif($destination_object === FALSE){
-	    
-	    // Get origin object
-	    //$origin_object = $this->get_origin_object($old_menu_item->object_id, $old_menu_item->object);
-	    // Create array for menu options
-	    $arguments = array(
-		'menu-item-title' => $old_menu_item->post_title, 
-		'menu-item-url' => '',
-		'menu-item-description' => $old_menu_item->post_content,
-		'menu-item-attr-title' => $old_menu_item->post_excerpt,
-		'menu-item-target' => $old_menu_meta['_menu_item_target'][0],
-		'menu-item-classes' => $item_classes,
-		'menu-item-xfn' => $old_menu_meta['_menu_item_xfn'][0],
-		'menu-item-status' => 'draft',
-		'menu-item-type' => 'post_type',
-		'menu-item-object' => $old_menu_item->object,
-		'menu-item-parent-id' => $this->parent_id,
-		'menu-item-position' => $old_menu_item->menu_order,
-		//'menu-item-object-id' => 0   
-	    );
-	}
-
-	
+	// Return arguments
 	return $arguments;
+
     }
     
-    
-    // Returns the classes items as as string from the supplied array
-    // Required to pass the data correctly to the add menu item function
-    private function get_item_classes($item_classes){
-	
-	// Item classes should be a string, not an array
-	$classes_string = '';
-
-	foreach($item_classes as $key=> $class){
-	    $classes_string.= ' '.$class;
-	}
-	
-	return $classes_string;
-    }
-    
-    // Function is called when no destination object exists, to act as a placeholder for invalid links
-    private function get_origin_object($object_id, $object_name){
-	
-	// Get current blog ID before switching
-	$current_id = get_current_blog_id();
-
-	// Switch to blog we're copying from 
-	switch_to_blog($this->origin_site_id);	    
-
-	// Get the original object
-	$origin_object = get_term($object_id, $object_name);
-
-	// Switch back to our current blog
-	switch_to_blog($current_id);	
-	
-	return $origin_object;
-    }
 }
