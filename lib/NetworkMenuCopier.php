@@ -205,7 +205,8 @@ class NetworkMenuCopier {
 		$menu_id = wp_create_nav_menu($menu_name);
 	    }
 	    
-	    $walker = new NetworkMenuWalker($menu_id); //add menu id to constructor
+	    // Initialize network menu walker object, and pass the current menu and site ID to it
+	    $walker = new NetworkMenuWalker($menu_id, $origin_site);
 	    $walker->walk($menu_object_items,0);
 	    
 	    

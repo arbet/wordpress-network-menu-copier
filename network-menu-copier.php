@@ -37,3 +37,7 @@ require_once (NMC_PATH.'/lib/NetworkMenuCopier.php');
 
 // Require Walker class - needed to properly copy parent-child menu items
 require_once (NMC_PATH.'/lib/NetworkMenuWalker.php');
+
+// Require Internal Classes used by the plugin
+require_once (NMC_PATH.'/lib/internal/NMC_Fetcher.php');
+require_once (NMC_PATH.'/lib/internal/NMC_Parser.php');

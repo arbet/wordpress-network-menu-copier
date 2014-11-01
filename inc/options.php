@@ -54,7 +54,8 @@ $sites = wp_get_sites();
 		Where will you be copying this menu to? Only sites that have the same active theme as origin site will be displayed here since every theme has a different menu structure. 
 	    </p>	    
 	</td>
-        </tr>		
+        </tr>
+	<tr valign="top">
         <th scope="row">New Menu Name</th>
         <td><input type='text' name='menu_name' value='' />
 	    <p class="description">
@@ -62,7 +63,7 @@ $sites = wp_get_sites();
 	    </p>
 	</td>
         </tr>	
-        </tr>		
+        <tr valign='top'>		
         <th scope="row">Menu location for subsites*</th>
         <td><select name='menu_location'  id="menu_location" class='select_chosen'>
 	    </select>
