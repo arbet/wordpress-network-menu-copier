@@ -82,7 +82,7 @@ class NetworkMenuWalker extends Walker_Nav_Menu {
     
 	
     }
-    // Function is here to override output of parent class
+    // When a level starts, set parent ID
     public function start_lvl( &$output, $depth = 0, $args = array() ) {
 	
     }

@@ -115,6 +115,35 @@ class NMC_Parser{
     
     private function prepare_taxonomy_arguments($old_menu_item, $linked_object) {
 	
+	// Get menu meta fields (title, description, xfn...)
+	$old_menu_meta = $this->object_fetcher->get_post_meta($old_menu_item->ID);	
+
+	// TODO: Shouldn't this only apply to a custom menu type? TEST
+	// Replace links to reflect new site URLs
+	$link = NetworkMenuCopier::replace_links($old_menu_meta['_menu_item_url'][0], get_site_url(intval ($_POST['origin_site'])), get_site_url() );
+
+	// Get a string of item classes from the array
+	$item_classes = $this->get_item_classes(unserialize($old_menu_meta['_menu_item_classes'][0]));
+
+	// Create array for menu options
+	$arguments = array(
+	    'menu-item-title' => $old_menu_item->post_title, 
+	    'menu-item-url' => $link,
+	    'menu-item-description' => $old_menu_item->post_content,
+	    'menu-item-attr-title' => $old_menu_item->post_excerpt,
+	    'menu-item-target' => $old_menu_meta['_menu_item_target'][0],
+	    'menu-item-classes' => $item_classes,
+	    'menu-item-xfn' => $old_menu_meta['_menu_item_xfn'][0],
+	    'menu-item-status' => 'publish',
+	    'menu-item-type' => 'taxonomy',
+	    'menu-item-object' => $old_menu_meta['_menu_item_object'][0],
+	    'menu-item-position' => $old_menu_item->menu_order,
+	    'menu-item-object-id' => $linked_object->term_id
+	);	
+
+
+
+	return $arguments;	
     }
     
     // Returns the classes items as as string from the supplied array

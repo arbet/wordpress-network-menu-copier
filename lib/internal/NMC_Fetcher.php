@@ -38,6 +38,11 @@ class NMC_Fetcher {
 	    $linked_object = $this->get_custom_link($old_menu_item);
 	}
 	
+	// We're linking to a taxonomy object
+	elseif($old_menu_item->type == 'taxonomy'){
+	    $linked_object = $this->get_taxonomy_entry($old_menu_item->object_id, $old_menu_item->object);
+	}
+	
 	return $linked_object;
 	
     }
@@ -99,9 +104,6 @@ class NMC_Fetcher {
      * @return Taxonomy Object on success, false if not found
      */    
     public function get_taxonomy_entry($tax_id, $taxonomy){
-	
-	// Get current blog ID before switching
-	$current_id = get_current_blog_id();
 
 	// Switch to blog we're copying from 
 	switch_to_blog($this->origin_site_id);	    
@@ -110,7 +112,7 @@ class NMC_Fetcher {
 	$entry = get_term($tax_id, $taxonomy);
 
 	// Switch back to our current blog
-	switch_to_blog($current_id);	    
+	switch_to_blog($this->destination_site_id);	    
 
 	// Get linked object
 	$linked_object = get_term_by('slug', $entry->slug, $taxonomy);
