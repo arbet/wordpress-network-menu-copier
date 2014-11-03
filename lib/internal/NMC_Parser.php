@@ -25,12 +25,19 @@ class NMC_Parser{
 	// Get the linked object
 	$linked_object  = $this->object_fetcher->get_object($old_menu_item);
 		
-	// Return arguments for a wordpress post
-	if(is_a($linked_object, 'WP_Post')){
+	// Object we're linking to is a WP Post object, but not a custom link
+	if(is_a($linked_object, 'WP_Post') && ($linked_object->post_type != 'nav_menu_item') ){
 
 	    return $this->prepare_post_arguments($old_menu_item, $linked_object);
 
 	}
+	
+	// We're linking to a custom link
+	elseif($linked_object->post_type == 'nav_menu_item') {
+	
+	    return $this->prepare_link_arguments($linked_object);
+	}
+	
 	// If this is an object, but not a WP_Post, then for certainly it's a taxonomy
 	elseif(is_object($linked_object)){
 	    return $this->prepare_taxonomy_arguments($old_menu_item, $linked_object);
@@ -75,6 +82,37 @@ class NMC_Parser{
 	return $arguments;
     }
     
+    // Prepare arguments for a custom link
+    private function prepare_link_arguments($old_menu_item){
+	
+	// Get menu meta fields (title, description, xfn...)
+	$old_menu_meta = $this->object_fetcher->get_post_meta($old_menu_item->ID);
+	
+	// Replace links to reflect new site URLs
+	$link = NetworkMenuCopier::replace_links($old_menu_meta['_menu_item_url'][0], get_site_url(intval ($_POST['origin_site'])), get_site_url() );
+
+	// Get a string of item classes from the array
+	$item_classes = $this->get_item_classes(unserialize($old_menu_meta['_menu_item_classes'][0]));	
+	
+	// Create array for menu options
+	$arguments = array(
+	    'menu-item-title' => $old_menu_item->post_title, 
+	    'menu-item-url' => $link,
+	    'menu-item-description' => $old_menu_item->post_content,
+	    'menu-item-attr-title' => $old_menu_item->post_excerpt,
+	    'menu-item-target' => $old_menu_meta['_menu_item_target'][0],
+	    'menu-item-classes' => $item_classes,
+	    'menu-item-xfn' => $old_menu_meta['_menu_item_xfn'][0],
+	    'menu-item-status' => 'publish',
+	    'menu-item-type' => 'custom',
+	    'menu-item-object' => 'custom',
+	    'menu-item-position' => $old_menu_item->menu_order,
+	);
+	
+	return $arguments;
+	
+    }
+    
     private function prepare_taxonomy_arguments($old_menu_item, $linked_object) {
 	
     }
@@ -92,6 +130,9 @@ class NMC_Parser{
 	
 	return $classes_string;
     }
+    
+    // Prepares arguments for a custom link
+    
     
 }
 

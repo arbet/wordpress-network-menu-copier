@@ -33,6 +33,11 @@ class NMC_Fetcher {
 	    $linked_object = $this->get_post($old_menu_item);
 	}
 	
+	// We're linking to a custom link
+	elseif($old_menu_item->type == 'custom'){
+	    $linked_object = $this->get_custom_link($old_menu_item);
+	}
+	
 	return $linked_object;
 	
     }
@@ -114,8 +119,10 @@ class NMC_Fetcher {
 	
     }
     
-    public function get_custom_link(){
+    public function get_custom_link($old_menu_item){
 	
+	// Just return the old menu item, since we'll be recreating it anyway
+	return $old_menu_item;
     }
 
 }
