@@ -58,12 +58,15 @@ class NetworkMenuWalker extends Walker_Nav_Menu {
 		}
 		
 		// Prepare arguments for copying
-		$arguments = $this->prepare_copy_arguments($item);
+		$arguments = $this->prepare_copy_arguments($item);		
 		
 		// Object was not found on destination site, stop copying
 		if($arguments === FALSE){
 		    return;
 		}
+		
+		// Set parent ID for arguments
+		$arguments['menu-item-parent-id'] = $this->parent_id;		
 		
 		// Add the item to the database
 		$item_id = wp_update_nav_menu_item( $this->menu_id, 0 , $arguments);	

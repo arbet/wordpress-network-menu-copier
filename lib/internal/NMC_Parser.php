@@ -66,7 +66,6 @@ class NMC_Parser{
 	    'menu-item-status' => 'publish',
 	    'menu-item-type' => 'post_type',
 	    'menu-item-object' => $old_menu_meta['_menu_item_object'][0],
-	    'menu-item-parent-id' => $this->parent_id,
 	    'menu-item-position' => $old_menu_item->menu_order,
 	    'menu-item-object-id' => $linked_post->ID
 	);	
