@@ -2,11 +2,19 @@
 
 class NetworkMenuCopier {
 
+    // Stores the activity log for all of the websites
+    var $combined_activity_log = array();
+    
+    // Initial site ID
+    var $initial_site_id;
     public function __construct() {
 
 	 // Add menu item to network admin page
 	 add_action('network_admin_menu', array($this, 'add_network_menus'));
 	 add_action( 'admin_init', array($this, 'register_settings' ));	 
+	 
+	// Set initial site ID
+	$this->initial_site_id = get_current_blog_id();
 	 
     }
     
@@ -17,8 +25,13 @@ class NetworkMenuCopier {
  */
     public function add_network_menus() {
          
+	// Add menu link to menu copier
 	$page_hook_suffix = add_submenu_page( 'settings.php', 'Network Menu Copier', 'Menu Copier', 'manage_network_options', 'network_menu_copier', array($this, 'display_options_page') );
 	
+	// Add activity log page without specifying a menu parent
+	add_submenu_page( NULL, 'Network Menu Copier Activity Log', 'Network Menu Copier Activity Log', 'manage_network_options', 'network_menu_copier_log', array($this, 'display_activity_log') );
+	
+	// Initialize admin scripts
 	add_action('admin_print_scripts-' . $page_hook_suffix, array($this, 'initialize_admin_scripts'));
 
     }
@@ -148,10 +161,10 @@ class NetworkMenuCopier {
     }
     
     // Copies the menus from origin site to destination sites
-    static function copy_menus(){
+    public function copy_menus(){
 	
 	// Display notices if any and stop processing if invalid
-	if(!NetworkMenuCopier::display_admin_notice()){
+	if(!$this->display_admin_notice()){
 	    return false;
 	}
 	
@@ -209,6 +222,8 @@ class NetworkMenuCopier {
 	    $walker = new NetworkMenuWalker($menu_id, $origin_site);
 	    $walker->walk($menu_object_items,0);
 	    
+	    // Add current site activity log to combined activity log
+	    $this->combined_activity_log[$site_id] = $walker->activity_log;	    
 	    
 	    // Now, we need to assign menus to the location we specified
 	    
@@ -221,14 +236,21 @@ class NetworkMenuCopier {
 	    update_option('theme_mods_'. get_stylesheet(), $theme_options);
 	    
 	    
-	}
-	//var_dump($menu_object);die();
+	} // All sites looped through
+
+	// Switch back to original site
+	switch_to_blog($this->initial_site_id);
+	
+	// Store completed activity log in our database
+	update_option('nmc_activity_log', $this->combined_activity_log);
+	
+	return;
     }
     
     /*
      * This function validates the user input and displays an error if invalid
      */
-    static function validate_user_input(){
+    public function validate_user_input(){
 	
 	if( empty($_POST['origin_site']) || empty($_POST['origin_menu'])
 		|| empty($_POST['destination_sites']) || empty($_POST['menu_location'])){
@@ -249,7 +271,7 @@ class NetworkMenuCopier {
     function display_admin_notice(){
 	
 	// Invalid user input
-	if(!NetworkMenuCopier::validate_user_input()){
+	if(!$this->validate_user_input()){
 	        ?>
 		    <div class="error">
 			<p><?php _e( 'You need to fill all required fields before copying.', 'network-menu-copier' ); ?></p>
@@ -272,63 +294,11 @@ class NetworkMenuCopier {
 	}
     }
     
-    /*
-     * Replaces the domain links properly inside menu links
-     */
-    static function replace_links($link, $old_site_url, $new_site_url){
-	
-	// Get possible link variations (e.g. user put www. ) 
-	$old_urls = NetworkMenuCopier::get_url_variations($old_site_url);
-	
-	// Replace old in new
-	foreach($old_urls as $url){
-	    
-	    // Attempt to replace old link by new link
-	    $new_link = str_replace($url, $new_site_url, $link);
-	    
-	    // Variation has been replaced
-	    if($new_link != $link){
-		return $new_link;
-	    }
-	}		
-	
-	// No replacement has been made, return the link as is
-	return $link;
-    }
     
-    /*
-     * Returns the URL variations for a site URL
-     */
-    private static function get_url_variations($url){
-	
-	// Check if this an http or https site
-	
-	// This is an http:// site
-	if(strpos($url, 'http://') !== FALSE){
-	    $prefix = 'http://';
-	}
-	
-	elseif(strpos($url, 'https://')){
-	    $prefix = 'https://';
-	}
-	
-	else 
-	    return false; // Incorrect prefix
-	
-	// Check if old site has www. in front of it
-	if(strpos($url, $prefix.'www.') !== FALSE){
-	    $urls[] = $url;
-	    $urls[] = str_replace($prefix.'www.', $prefix, $url);
-	}
-	// In case it does not have www.
-	elseif(strpos($url, $prefix)!==FALSE){
-	    $urls[] = $url;
-	    $urls[] = str_replace($prefix, $prefix.'www.', $url);
-	}
-	
-	// return list of urls
-	return $urls;
-    }
+    // Displays the latest activity log
+    public function display_activity_log(){
+	require (NMC_PATH.'/inc/log.php'); 
+    }    
 }
 
 $networkcopier = new NetworkMenuCopier();

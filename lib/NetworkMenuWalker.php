@@ -29,6 +29,9 @@ class NetworkMenuWalker extends Walker_Nav_Menu {
     
     public $debug_storage; // Internal variable for debug storage, ignore
     
+    // Stores the log of the whole run
+    public $activity_log = array();
+    
     // Status of menu: publish or draft. Initially set to published, if invalid links are found, we'll set it to draft
     public $menu_status = 'publish';
     
@@ -39,6 +42,7 @@ class NetworkMenuWalker extends Walker_Nav_Menu {
     public function __construct($menu_id, $site_id) {
 	$this->menu_id = $menu_id;
 	$this->origin_site_id = $site_id;
+
     }
     
     public function __destruct() {
@@ -68,6 +72,9 @@ class NetworkMenuWalker extends Walker_Nav_Menu {
 
 	// Object was not found on destination site, stop copying
 	if($arguments === FALSE){
+	    
+	    // Add that node was skipped to activity log
+	    $this->add_log_entry($item, 'skipped');   
 	    return;
 	}
 
@@ -139,6 +146,16 @@ class NetworkMenuWalker extends Walker_Nav_Menu {
 	// Return arguments
 	return $arguments;
 
+    }
+    
+    // Create a log entry in our activity log
+    private function add_log_entry($item, $action){
+	
+	// If the item has a title, just add the entry
+	if($item->post_title!=''){
+	    $this->activity_log[] = array('message' => $item->post_title. " has been ".$action);
+	}
+	
     }
     
 }

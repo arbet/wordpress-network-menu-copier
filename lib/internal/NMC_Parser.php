@@ -56,7 +56,7 @@ class NMC_Parser{
 
 	// TODO: Shouldn't this only apply to a custom menu type? TEST
 	// Replace links to reflect new site URLs
-	$link = NetworkMenuCopier::replace_links($old_menu_meta['_menu_item_url'][0], get_site_url(intval ($_POST['origin_site'])), get_site_url() );
+	$link = $this->replace_links($old_menu_meta['_menu_item_url'][0], get_site_url(intval ($_POST['origin_site'])), get_site_url() );
 
 	// Get a string of item classes from the array
 	$item_classes = $this->get_item_classes(unserialize($old_menu_meta['_menu_item_classes'][0]));
@@ -89,7 +89,7 @@ class NMC_Parser{
 	$old_menu_meta = $this->object_fetcher->get_post_meta($old_menu_item->ID);
 	
 	// Replace links to reflect new site URLs
-	$link = NetworkMenuCopier::replace_links($old_menu_meta['_menu_item_url'][0], get_site_url(intval ($_POST['origin_site'])), get_site_url() );
+	$link = $this->replace_links($old_menu_meta['_menu_item_url'][0], get_site_url(intval ($_POST['origin_site'])), get_site_url() );
 
 	// Get a string of item classes from the array
 	$item_classes = $this->get_item_classes(unserialize($old_menu_meta['_menu_item_classes'][0]));	
@@ -120,7 +120,7 @@ class NMC_Parser{
 
 	// TODO: Shouldn't this only apply to a custom menu type? TEST
 	// Replace links to reflect new site URLs
-	$link = NetworkMenuCopier::replace_links($old_menu_meta['_menu_item_url'][0], get_site_url(intval ($_POST['origin_site'])), get_site_url() );
+	$link = $this->replace_links($old_menu_meta['_menu_item_url'][0], get_site_url(intval ($_POST['origin_site'])), get_site_url() );
 
 	// Get a string of item classes from the array
 	$item_classes = $this->get_item_classes(unserialize($old_menu_meta['_menu_item_classes'][0]));
@@ -160,8 +160,63 @@ class NMC_Parser{
 	return $classes_string;
     }
     
-    // Prepares arguments for a custom link
+    /*
+     * Replaces the domain links properly inside menu links
+     */
+    private function replace_links($link, $old_site_url, $new_site_url){
+	
+	// Get possible link variations (e.g. user put www. ) 
+	$old_urls = $this->get_url_variations($old_site_url);
+	
+	// Replace old in new
+	foreach($old_urls as $url){
+	    
+	    // Attempt to replace old link by new link
+	    $new_link = str_replace($url, $new_site_url, $link);
+	    
+	    // Variation has been replaced
+	    if($new_link != $link){
+		return $new_link;
+	    }
+	}		
+	
+	// No replacement has been made, return the link as is
+	return $link;
+    }
     
+   /*
+     * Returns the URL variations for a site URL
+     */
+    private static function get_url_variations($url){
+	
+	// Check if this an http or https site
+	
+	// This is an http:// site
+	if(strpos($url, 'http://') !== FALSE){
+	    $prefix = 'http://';
+	}
+	
+	elseif(strpos($url, 'https://')){
+	    $prefix = 'https://';
+	}
+	
+	else 
+	    return false; // Incorrect prefix
+	
+	// Check if old site has www. in front of it
+	if(strpos($url, $prefix.'www.') !== FALSE){
+	    $urls[] = $url;
+	    $urls[] = str_replace($prefix.'www.', $prefix, $url);
+	}
+	// In case it does not have www.
+	elseif(strpos($url, $prefix)!==FALSE){
+	    $urls[] = $url;
+	    $urls[] = str_replace($prefix, $prefix.'www.', $url);
+	}
+	
+	// return list of urls
+	return $urls;
+    }    
     
 }
 
