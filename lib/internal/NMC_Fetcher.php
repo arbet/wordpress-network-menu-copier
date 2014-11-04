@@ -53,7 +53,7 @@ class NMC_Fetcher {
      * @return false if object is not found
      */    
     
-    private function get_post($old_menu_item){    
+    public function get_post($old_menu_item){    
 
 	// Switch to origin site to get the post our menu item is linking to
 	switch_to_blog($this->origin_site_id);
@@ -68,7 +68,6 @@ class NMC_Fetcher {
 	$fetched_posts = get_posts( array(
 	    'name' => $origin_post->post_name,
 	    'post_type' => $origin_post->post_type,
-	    'post_status' => 'publish',
 	    'posts_per_page' => 1
 	));
 

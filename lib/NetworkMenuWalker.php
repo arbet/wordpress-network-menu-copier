@@ -154,6 +154,42 @@ class NetworkMenuWalker extends Walker_Nav_Menu {
 	// If the item has a title, just add the entry
 	if($item->post_title!=''){
 	    $this->activity_log[] = array('message' => $item->post_title. " has been ".$action);
+	    return;
+	}
+	
+	// If not, we need to get the title based on the object type
+	elseif($item->type == 'taxonomy'){
+	    
+	    // Create fetcher object
+	    $fetcher = new NMC_Fetcher($this->origin_site_id, $this->origin_site_id);
+	    
+	    // Get taxonomy details
+	    $taxonomy = $fetcher->get_taxonomy_entry($item->object_id, $item->object);
+	    
+	    // Create log message
+	    $message = $item->type_label." ".$taxonomy->name." has been ".$action;
+	    
+	    // Add to activity log
+	    $this->activity_log[] = array('message' => $message);
+	    
+	    return;
+	}
+	
+	elseif($item->type == 'post_type'){
+	    
+	    // Create fetcher object
+	    $fetcher = new NMC_Fetcher($this->origin_site_id, $this->origin_site_id);
+	    
+	    // Get the posts by slug and type
+	    $fetched_post = $fetcher->get_post($item);
+	    
+	    // Create log message
+	    $message = $item->type_label." ".$fetched_post->post_title." has been ".$action;
+	    
+	    // Add to activity log
+	    $this->activity_log[] = array('message' => $message);
+	    
+	    return;
 	}
 	
     }
