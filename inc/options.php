@@ -16,9 +16,9 @@ if(!empty($_POST)){
 <div class="wrap">
 <h2>Network Menu Copier</h2>
 
-<?php if(!empty(get_option('nmc_activity_log'))){ ?>
+
 <p><a href='settings.php?page=network_menu_copier_log'>View Activity Log of Last Run</a></p>
-<?php } ?>
+
 
 <form method="post" action="settings.php?page=network_menu_copier"> 
 
