@@ -3,7 +3,7 @@ Contributors: arbet01
 Tags: network, multisite, menu, copy, copier, bulk
 Requires at least: 3.6
 Tested up to: 4.0
-Stable tag: 1.2
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,3 +24,12 @@ This is what this plugin helps you exactly achieve in a matter of clicks.
 == Changelog ==
 = 1.0 =
 * Initial Release
+
+= 1.1 =
+* Bug Fix: Parent-Child menus weren't properly copied in some cases, fixed. 
+
+= 1.2 =
+* Implemented logging capabilities for plugin
+
+= 1.2.1 =
+* Fixed bug with logging engine
