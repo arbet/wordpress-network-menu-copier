@@ -3,7 +3,7 @@
  * Plugin Name: Network Menu Copier
  * Plugin URI: http://thoughtengineer.com/
  * Description:  Copies a specific menu from one sub site to one or more other subsites on the same network installation.
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Samer Bechara
  * Author URI: http://thoughtengineer.com/
  * Text Domain: network-menu-copier

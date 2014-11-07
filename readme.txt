@@ -3,7 +3,7 @@ Contributors: arbet01
 Tags: network, multisite, menu, copy, copier, bulk
 Requires at least: 3.6
 Tested up to: 4.0
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,3 +33,6 @@ This is what this plugin helps you exactly achieve in a matter of clicks.
 
 = 1.2.1 =
 * Fixed bug with logging engine
+
+= 1.2.2 =
+* Removed warnings which used to show if debug mode is enabled

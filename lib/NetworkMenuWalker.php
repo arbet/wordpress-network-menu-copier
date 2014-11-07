@@ -56,7 +56,7 @@ class NetworkMenuWalker extends Walker_Nav_Menu {
      * @param array  $args   An array of arguments.
      *	    'inserted_id' - The ID of the node last inserted
      */
-    public function start_el(&$output, $item = 0, $depth = 0, $args = array()){
+    public function start_el(&$output, $item = 0, $depth = 0, $args = array(), $id = 0 ){
 	
 	$this->debug_storage[] = "Item $item->ID started";
 	
