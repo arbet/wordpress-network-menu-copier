@@ -214,7 +214,7 @@ class NetworkMenuCopier {
 	    else{
 
 		// Delete the old menu and recreate it
-		wp_delete_nav_menu($menu_exists->{term_id});
+		wp_delete_nav_menu($menu_exists->term_id);
 		$menu_id = wp_create_nav_menu($menu_name);
 	    }
 	    

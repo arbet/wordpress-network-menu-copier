@@ -33,7 +33,7 @@ class NMC_Parser{
 	}
 	
 	// We're linking to a custom link
-	elseif($linked_object->post_type == 'nav_menu_item') {
+	elseif(is_a($linked_object, 'WP_Post') && ($linked_object->post_type == 'nav_menu_item') ){
 	
 	    return $this->prepare_link_arguments($linked_object);
 	}
@@ -115,6 +115,26 @@ class NMC_Parser{
     
     private function prepare_taxonomy_arguments($old_menu_item, $linked_object) {
 	
+	// Skip empty taxonomies flag is checked
+	if(isset($_POST['skip_empty'])){	    
+	    
+	    // Check if any posts are attached to taxonomy, otherwise skip
+	    $fetched_posts = get_posts( array(
+		'posts_per_page' => 1,
+		'tax_query' => array(
+				    array(
+					'taxonomy' => $linked_object->taxonomy,
+					'field' => 'slug',
+					'terms' => $linked_object->slug
+					)
+				    )
+	    ));
+	    
+	    // No posts have been found, skip taxonomy
+	    if(count($fetched_posts) == 0){
+		return false;
+	    }
+	}
 	// Get menu meta fields (title, description, xfn...)
 	$old_menu_meta = $this->object_fetcher->get_post_meta($old_menu_item->ID);	
 

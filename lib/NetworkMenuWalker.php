@@ -81,7 +81,8 @@ class NetworkMenuWalker extends Walker_Nav_Menu {
 	if($depth != 0){
 
 	    // Set parent ID to the last parent in our parents array for non-top level elements
-	    $arguments['menu-item-parent-id'] = end(array_values($this->node_parents));				    
+	    $parents_values = array_values($this->node_parents);
+	    $arguments['menu-item-parent-id'] = end($parents_values);				    
 	}
 
 	// This is a top level element, parent ID is none

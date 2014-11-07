@@ -79,6 +79,14 @@ $sites = wp_get_sites();
 	    </p>
 	</td>
         </tr>	
+        <tr valign="top">
+        <th scope="row"></th>
+        <td><input type="checkbox" name="skip_empty" value=""/> Skip Empty Taxonomies
+	    <p class="description">
+		If checked, menu items pointing to empty categories, tags and other custom taxonomies will be skipped.
+	    </p>	    	   
+	</td>
+        </tr>		
 </table> 
     
 <?php
