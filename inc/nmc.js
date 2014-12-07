@@ -82,7 +82,7 @@ function get_sites_by_theme(){
         $.each(sites, function(key, value) { 
 
             // Replace select boxes
-            $("#destination_sites").append($("<option></option>").attr("value",value.blog_id).text(value.domain)); 
+            $("#destination_sites").append($("<option></option>").attr("value",value.blog_id).text(value.domain + value.path)); 
         });
         
         // Rebuild chosen select boxes
