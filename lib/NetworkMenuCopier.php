@@ -126,7 +126,7 @@ class NetworkMenuCopier {
 	    
 	    // Add to list of our sites if the blog has the same active theme
 	    if( ($blog_theme_name == $theme_name) ){
-		$sites_to_send[] = array('blog_id' => $site['blog_id'], 'domain' => $site['domain']);
+		$sites_to_send[] = array('blog_id' => $site['blog_id'], 'domain' => $site['domain'], 'path' => $site['path']);
 	    }
 	    
 	    restore_current_blog();		    
