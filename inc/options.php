@@ -39,7 +39,7 @@ $sites = wp_get_sites();
         <th scope="row">Origin site*</th>
         <td><select name='origin_site' id='origin_site' class='select_chosen'>
 <?php    foreach($sites as $key=>$site){
-	echo "<option value='".$site['blog_id']."'>".$site['domain']."</option>";
+	echo "<option value='".$site['blog_id']."'>".$site['domain'].$site['path']."</option>";
     }
 ?>
 	    </select>
