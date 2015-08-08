@@ -233,6 +233,14 @@ class NetworkMenuCopier {
 	    $theme_options['nav_menu_locations'][$menu_location] = $menu_id;
 	    
 	    // Update option with new location
+	    // the update_option is unreliable when copying menu's from a subsite to the mainsite;
+	    // it will override the menu of the subsite itself instead of the one on the main site
+	    // see this blogpost for more on the implemented solution:
+	    // http://www.htmlcenter.com/blog/wordpress-multi-site-switching-blogs/
+	    $dbobj->blogid = $site_id; // update blog id on cloned db object
+	    $dbobj->set_prefix($dbobj->base_prefix); // set prefix on cloned db object - this will work with subsites as well as the main site
+	    $dbobj->update($dbobj->prefix . 'options', array('option_value' => serialize($theme_options)), array('option_name' => 'theme_mods_' . get_stylesheet()));
+
 	    update_option('theme_mods_'. get_stylesheet(), $theme_options);
 	    
 	    
